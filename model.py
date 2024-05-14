@@ -1,6 +1,7 @@
 from typing import List
 
-class Verse():
+
+class Verse:
     def __init__(self, number: int, text):
         self.__number = number
         self.__text = text
@@ -13,7 +14,8 @@ class Verse():
     def text(self) -> str:
         return self.__text
 
-class Chapter():
+
+class Chapter:
     def __init__(self, number: int, verses: List[Verse]):
         self.__number = number
         self.__verses = verses
@@ -26,7 +28,8 @@ class Chapter():
     def verses(self) -> List[Verse]:
         return self.__verses
 
-class Book():
+
+class Book:
     def __init__(self, name: str, chapters: List[Chapter]):
         self.__name = name
         self.__chapters = chapters
@@ -39,7 +42,22 @@ class Book():
     def chapters(self) -> List[Chapter]:
         return self.__chapters
 
-class Bible():
+
+class Bible:
+    def __init__(self, name: str, books: List[Book]):
+        self.__name = name
+        self.__books = books
+
+    @property
+    def name(self) -> str:
+        return self.__name
+
+    @property
+    def books(self) -> List[Book]:
+        return self.__books
+
+
+class Plan:
     def __init__(self, name: str, books: List[Book]):
         self.__name = name
         self.__books = books
