@@ -1,3 +1,4 @@
+from . import model
 from functools import reduce
 import logging
 from typing import List, Optional
@@ -97,19 +98,37 @@ singleChapterBook = pp.Or(
     ]
 ).setResultsName("book")
 
-startVerse = integer.setResultsName("start_verse")
-endVerse = integer.setResultsName("end_verse")
-verseRange = (startVerse + "-" + endVerse).setResultsName("verse_range")
-verseOrVerseRange = verseRange | startVerse
-verseOrVerseRangeList = pp.DelimitedList(verseOrVerseRange)
-chapter = integer.setResultsName("chapter")
-chapterMaybeVerseParser = chapter + pp.Opt(":" + verseOrVerseRangeList)
-
-mainParser = (chapteredBook + pp.Opt(chapterMaybeVerseParser)) | (
-    singleChapterBook + pp.Opt(verseOrVerseRangeList)
+startVerse = integer.setResultsName("start_verse").setParseAction(model.Verse)
+endVerse = integer.setResultsName("end_verse").setParseAction(model.Verse)
+verseRange = (
+    ((startVerse + "-" + endVerse) | startVerse)
+    .setResultsName("verse_range")
+    .setParseAction(model.VerseRange)
+)
+verseRangeList = (
+    pp.DelimitedList(verseRange)
+    .setResultsName("verse_range_list")
+    .setParseAction(model.VerseRangeList)
+)
+chapterAndVerse = (
+    (integer.setResultsName("chapter") + pp.Opt(":" + verseRangeList))
+    .setResultsName("chapter_and_verse")
+    .setParseAction(model.ChapterAndVerseRanges)
+)
+chapteredReference = (
+    (chapteredBook + pp.Opt(chapterAndVerse))
+    .setResultsName("chaptered_reference")
+    .setParseAction(model.Reference)
+)
+singleChapteredReference = (
+    (singleChapterBook + pp.Opt(verseRangeList)).setResultsName(
+        "single_chaptered_reference"
+    )
+    .setParseAction(model.Reference)
 )
 
+referenceParser = (chapteredReference | singleChapteredReference).setResultsName("reference")
 
 def parse(input: str) -> List[pp.ParseResults]:
-    result = mainParser.parseString(input, parse_all=False)
-    return [result]
+    result = referenceParser.parseString(input, parse_all=False)
+    return result
