@@ -1,0 +1,16 @@
+pyproject.toml
+src/bible_coverage/__init__.py
+src/bible_coverage/cfg.py
+src/bible_coverage/model.py
+src/bible_coverage.egg-info/PKG-INFO
+src/bible_coverage.egg-info/SOURCES.txt
+src/bible_coverage.egg-info/dependency_links.txt
+src/bible_coverage.egg-info/top_level.txt
+src/bible_coverage/bibles/__init__.py
+src/bible_coverage/bibles/nasb/__init__.py
+src/bible_coverage/bibles/nasb/nasb1971/__init__.py
+src/bible_coverage/bibles/nasb/nasb1971/bible.py
+src/bible_coverage/plans/__init__.py
+src/bible_coverage/plans/rcl/__init__.py
+src/bible_coverage/plans/rcl/plan.py
+tests/test_cfg.py
