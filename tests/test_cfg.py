@@ -3,7 +3,7 @@ import unittest
 import pyparsing
 import pytest
 
-import bible_coverage.cfg as cfg
+import bible_coverage.parser.cfg as cfg
 
 
 # forms:
