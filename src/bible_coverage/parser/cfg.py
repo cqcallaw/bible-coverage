@@ -96,7 +96,7 @@ singleChapterBook = pp.Or(
     ]
 ).setResultsName("book")
 
-integer = pp.Word(pp.nums)
+integer = pp.Word(pp.nums).setParseAction(lambda toks: int(toks[0]))
 
 
 startVerse = integer.setResultsName("start_verse")

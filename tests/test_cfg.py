@@ -21,14 +21,14 @@ class TestVerseParsing(unittest.TestCase):
         result = cfg.parse("Genesis 1:1")
         assert result
         self.assertEqual(result.book, "Genesis")
-        self.assertEqual(result.chapter, "1")
-        self.assertEqual(result.start_verse, "1")
+        self.assertEqual(result.chapter, 1)
+        self.assertEqual(result.start_verse, 1)
 
     def test_whole_psalm(self) -> None:
         result = cfg.parse("Psalm 100")
         assert result
         self.assertEqual(result.book, "Psalm")
-        self.assertEqual(result.chapter, "100")
+        self.assertEqual(result.chapter, 100)
         self.assertFalse(result.start_verse)
 
     def test_whole_book(self) -> None:
@@ -43,7 +43,7 @@ class TestVerseParsing(unittest.TestCase):
         assert result
         self.assertEqual(result.book, "Jude")
         self.assertFalse(result.chapter)
-        self.assertEqual(result.start_verse, "3")
+        self.assertEqual(result.start_verse, 3)
 
     def test_invalid(self) -> None:
         with pytest.raises(pyparsing.exceptions.ParseException):
@@ -53,9 +53,9 @@ class TestVerseParsing(unittest.TestCase):
         result = cfg.parse("Genesis 15:1-6")
         assert result
         self.assertEqual(result.book, "Genesis")
-        self.assertEqual(result.chapter, "15")
-        self.assertEqual(result.start_verse, "1")
-        self.assertEqual(result.end_verse, "6")
+        self.assertEqual(result.chapter, 15)
+        self.assertEqual(result.start_verse, 1)
+        self.assertEqual(result.end_verse, 6)
 
 
 if __name__ == "__main__":
