@@ -87,11 +87,14 @@ singleChapterBookParser = (
     .setResultsName("book")
 )
 
-verseParser = pp.Opt(integer).setResultsName("verse")
-chapterParser = pp.Opt(integer).setResultsName("chapter")
-chapterAndVerseParser = pp.Opt(chapterParser + pp.Opt(":" + verseParser))
-mainParser = (chapteredBookParser + chapterAndVerseParser) | (
-    singleChapterBookParser + verseParser
+startVerse = integer.setResultsName("start_verse")
+endVerse = integer.setResultsName("end_verse")
+verseRange = (startVerse + "-" + endVerse).setResultsName("verse_range")
+verseOrVerseRange = verseRange | startVerse
+chapter = integer.setResultsName("chapter")
+chapterAndVerseParser = chapter + pp.Opt(":" + verseOrVerseRange)
+mainParser = (chapteredBookParser + pp.Opt(chapterAndVerseParser)) | (
+    singleChapterBookParser + pp.Opt(verseOrVerseRange)
 )
 
 
