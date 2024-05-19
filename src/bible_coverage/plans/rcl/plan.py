@@ -29,12 +29,4 @@ def parse(bible: Bible, plan_text_paths: List[str] = paths) -> Plan:
     for bible_section in bible_sections:
         print(bible_section)
 
-    # forms:
-    # <book><chapter>
-    # <book><verse range>
-    # <book><chapter>:<verse range>
-    # <book><chapter>:<verse range>[<optional verse range>]
-    # <book><chapter>:<verse range>;<verse range>[<optional verse range>]
-    # <book><chapter>:[<optional verse range>]<verse range>
-    # <section> or <section>
     return Plan("RCL", [])

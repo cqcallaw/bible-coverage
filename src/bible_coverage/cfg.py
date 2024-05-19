@@ -1,7 +1,11 @@
-from typing import List
+import logging
+from typing import Optional
 import pyparsing as pp
 
-books = [
+logger = logging.getLogger(__name__)
+
+
+chapteredBooks = [
     pp.Keyword(book)
     for book in [
         "Genesis",
@@ -17,6 +21,7 @@ books = [
         "Esther",
         "Job",
         "Psalms",
+        "Psalm",
         "Proverbs",
         "Ecclesiastes",
         "Isaiah",
@@ -27,7 +32,6 @@ books = [
         "Hosea",
         "Joel",
         "Amos",
-        "Obadiah",
         "Jonah",
         "Micah",
         "Nahum",
@@ -47,11 +51,16 @@ books = [
         "Philippians",
         "Colossians",
         "Titus",
-        "Philemon",
         "Hebrews",
         "James",
-        "Jude",
         "Revelation",
+        "Sirach",
+    ]
+]
+
+singleChapterBooks = [
+    pp.Keyword(book)
+    for book in [
         "Obadiah",
         "Philemon",
         "Jude",
@@ -61,13 +70,31 @@ books = [
 integer = pp.Word(pp.nums)
 
 
-def isBibleBook(t) -> bool:
-    return t[0] in books
+def isChapterBibleBook(t) -> bool:
+    return t[0] in chapteredBooks
 
 
-parser = pp.Regex(r"\b[A-Za-z]+\b")
-parser.addCondition(isBibleBook)
+def isSingleChaperBibleBook(t) -> bool:
+    return t[0] in singleChapterBooks
 
 
-def parse(input: str) -> pp.ParseResults:
-    return parser.parse_string(input)
+chapteredBookParser = (
+    pp.Regex(r"\b[A-Za-z]+\b").addCondition(isChapterBibleBook).setResultsName("book")
+)
+singleChapterBookParser = (
+    pp.Regex(r"\b[A-Za-z]+\b")
+    .addCondition(isSingleChaperBibleBook)
+    .setResultsName("book")
+)
+
+verseParser = pp.Opt(integer).setResultsName("verse")
+chapterParser = pp.Opt(integer).setResultsName("chapter")
+chapterAndVerseParser = pp.Opt(chapterParser + pp.Opt(":" + verseParser))
+mainParser = (chapteredBookParser + chapterAndVerseParser) | (
+    singleChapterBookParser + verseParser
+)
+
+
+def parse(input: str) -> Optional[pp.ParseResults]:
+    result = mainParser.parseString(input, parse_all=False)
+    return result
