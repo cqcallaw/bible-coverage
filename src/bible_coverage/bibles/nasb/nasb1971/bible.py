@@ -10,7 +10,6 @@ def parse(
     books: List[Book] = []
     with open(bible_text_path) as file:
         current_book_name: str = "Genesis"
-        current_book_list: List[Book] = []
         current_chapter_list: List[Chapter] = []
         current_chapter_number: int = 1
         current_chapter_verses: List[Verse] = []
