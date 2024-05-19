@@ -1,13 +1,13 @@
 import os
 import re
 from typing import List
-from model import Bible, Book, Chapter, Verse
+from bible_coverage.model import Bible, Book, Chapter, Verse
 
 
 def parse(
     bible_text_path: str = os.path.join(os.path.dirname(__file__), "bible.txt"),
 ) -> Bible:
-    books: Bible = []
+    books: List[Book] = []
     with open(bible_text_path) as file:
         current_book_name: str = "Genesis"
         current_book_list: List[Book] = []
@@ -42,7 +42,7 @@ def parse(
                     current_chapter_list = []
 
     # handle final chapter
-    current_book_list.append(Chapter(current_chapter_number, current_chapter_verses))
+    current_chapter_list.append(Chapter(current_chapter_number, current_chapter_verses))
     books.append(Book(current_book_name, current_chapter_list))
 
     return Bible("NASB 1971", books)
