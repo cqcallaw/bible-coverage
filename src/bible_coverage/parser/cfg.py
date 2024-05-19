@@ -1,11 +1,12 @@
 from functools import reduce
 import logging
-from typing import Optional
+from typing import List, Optional
 import pyparsing as pp
 import pythonbible as pb
 
 logger = logging.getLogger(__name__)
 
+integer = pp.Word(pp.nums).setParseAction(lambda toks: int(toks[0]))
 
 chapteredBook = pp.Or(
     [
@@ -96,20 +97,19 @@ singleChapterBook = pp.Or(
     ]
 ).setResultsName("book")
 
-integer = pp.Word(pp.nums).setParseAction(lambda toks: int(toks[0]))
-
-
 startVerse = integer.setResultsName("start_verse")
 endVerse = integer.setResultsName("end_verse")
 verseRange = (startVerse + "-" + endVerse).setResultsName("verse_range")
 verseOrVerseRange = verseRange | startVerse
+verseOrVerseRangeList = pp.DelimitedList(verseOrVerseRange)
 chapter = integer.setResultsName("chapter")
-chapterAndVerseParser = chapter + pp.Opt(":" + verseOrVerseRange)
-mainParser = (chapteredBook + pp.Opt(chapterAndVerseParser)) | (
-    singleChapterBook + pp.Opt(verseOrVerseRange)
+chapterMaybeVerseParser = chapter + pp.Opt(":" + verseOrVerseRangeList)
+
+mainParser = (chapteredBook + pp.Opt(chapterMaybeVerseParser)) | (
+    singleChapterBook + pp.Opt(verseOrVerseRangeList)
 )
 
 
-def parse(input: str) -> Optional[pp.ParseResults]:
+def parse(input: str) -> List[pp.ParseResults]:
     result = mainParser.parseString(input, parse_all=False)
-    return result
+    return [result]
