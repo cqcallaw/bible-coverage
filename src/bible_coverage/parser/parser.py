@@ -1,17 +1,16 @@
 from . import model
-from functools import reduce
 import logging
-from typing import List, Optional
+from typing import List
 import pyparsing as pp
 import pythonbible as pb
 
 logger = logging.getLogger(__name__)
 
-integer = pp.Word(pp.nums).setParseAction(lambda toks: int(toks[0]))
+integer = pp.Word(pp.nums).set_parse_action(lambda toks: int(toks[0]))
 
-chapteredBook = pp.Or(
+book = pp.Or(
     [
-        pp.Regex(book.regular_expression).setResultsName(book.title)
+        pp.Regex(book.regular_expression).set_parse_action(model.Book)
         for book in [
             pb.Book.GENESIS,
             pb.Book.EXODUS,
@@ -82,53 +81,88 @@ chapteredBook = pp.Or(
             pb.Book.ECCLESIASTICUS,
             pb.Book.MACCABEES_1,
             pb.Book.MACCABEES_2,
-        ]
-    ]
-).setResultsName("book")
-
-
-singleChapterBook = pp.Or(
-    [
-        pp.Regex(book.regular_expression).setResultsName(book.title)
-        for book in [
             pb.Book.OBADIAH,
             pb.Book.PHILEMON,
             pb.Book.JUDE,
         ]
     ]
-).setResultsName("book")
+).set_results_name("book")
 
-startVerse = integer.setResultsName("start_verse").setParseAction(model.Verse)
-endVerse = integer.setResultsName("end_verse").setParseAction(model.Verse)
+
+# singleChapterBook = pp.Or(
+#     [
+#         pp.Regex(book.regular_expression)
+#         .set_parse_action(lambda: model.Book(book.title, book))
+#         for book in [
+#             pb.Book.OBADIAH,
+#             pb.Book.PHILEMON,
+#             pb.Book.JUDE,
+#         ]
+#     ]
+# ).set_results_name("book")
+
+startVerse = integer.set_results_name("start_verse").set_parse_action(model.Verse)
+endVerse = integer.set_results_name("end_verse").set_parse_action(model.Verse)
 verseRange = (
     ((startVerse + "-" + endVerse) | startVerse)
-    .setResultsName("verse_range")
-    .setParseAction(model.VerseRange)
+    .set_results_name("verse_range")
+    .set_parse_action(model.VerseRange)
 )
 verseRangeList = (
-    pp.DelimitedList(verseRange)
-    .setResultsName("verse_range_list")
-    .setParseAction(model.VerseRangeList)
+    pp.DelimitedList(verseRange, delim=",")
+    .set_results_name("verse_range_list")
+    .set_parse_action(model.VerseRangeList)
 )
-chapterAndVerse = (
-    (integer.setResultsName("chapter") + pp.Opt(":" + verseRangeList))
-    .setResultsName("chapter_and_verse")
-    .setParseAction(model.ChapterAndVerseRanges)
+
+startChapter = integer.set_results_name("start_chapter").set_parse_action(model.Chapter)
+endChapter = integer.set_results_name("end_chapter").set_parse_action(model.Chapter)
+chapterRange = (
+    ((startChapter + "-" + endChapter) | startChapter)
+    .set_results_name("chapter_range")
+    .set_parse_action(model.ChapterRange)
 )
-chapteredReference = (
-    (chapteredBook + pp.Opt(chapterAndVerse))
-    .setResultsName("chaptered_reference")
-    .setParseAction(model.Reference)
+chapterRangeList = (
+    pp.DelimitedList(chapterRange, delim=",")
+    .set_results_name("chapter_range_list")
+    .set_parse_action(model.ChapterRangeList)
 )
-singleChapteredReference = (
-    (singleChapterBook + pp.Opt(verseRangeList)).setResultsName(
-        "single_chaptered_reference"
+
+chapterAndVerseRanges = (
+    (startChapter + ":" + pp.Group(verseRangeList))
+    .set_results_name("chapter_and_verse_ranges")
+    .set_parse_action(model.ChapterAndVerseRanges)
+)
+chapterAndVerseRangesList = (
+    pp.DelimitedList(expr=chapterAndVerseRanges, delim=";")
+    .set_results_name("chapter_and_verse_range_list")
+    .set_parse_action(model.ChapterAndVerseRangeList)
+)
+
+multiChapterRange = (
+    (startChapter + ":" + startVerse + "-" + endChapter + ":" + endVerse)
+    .set_results_name("multi_chapter_range")
+    .set_parse_action(model.MultiChapterRange)
+)
+multiChapterRangeList = (
+    pp.DelimitedList(multiChapterRange)
+    .set_results_name("multi_chapter_range_list")
+    .set_parse_action(model.MultiChapterRangeList)
+)
+
+chapterRangesAndVerseRanges = (
+    (multiChapterRangeList | chapterAndVerseRangesList | chapterRangeList)
+    .set_results_name("chapter_and_verse")
+    .set_parse_action(model.ChapterAndVerseRanges)
+)
+
+reference = (
+    (book + pp.Opt(chapterRangesAndVerseRanges)).set_results_name("reference")
+    .set_parse_action(model.Reference)
+)
+
+def parse(input: str, bible=None) -> List[model.NormalizedReference]:
+    parseResult = reference.parseString(input, parse_all=False)
+    refs = parseResult.chapterRangesAndVerseRanges.getNormalizedReferences(
+        bible, parseResult.book
     )
-    .setParseAction(model.Reference)
-)
-
-referenceParser = (chapteredReference | singleChapteredReference).setResultsName("reference")
-
-def parse(input: str) -> List[pp.ParseResults]:
-    result = referenceParser.parseString(input, parse_all=False)
-    return result
+    return refs

@@ -12,7 +12,6 @@ paths = [
 
 
 def parse(bible: Bible, plan_text_paths: List[str] = paths) -> Plan:
-    book_names = [book.name for book in bible.books]
     textual_lines = [
         rawline.strip()
         for plan_text_path in plan_text_paths
@@ -30,3 +29,11 @@ def parse(bible: Bible, plan_text_paths: List[str] = paths) -> Plan:
         print(bible_section)
 
     return Plan("RCL", [])
+    # [
+    #     pythonbible.convert_reference_to_verse_ids(ref)
+    #     for plan_text_path in plan_text_paths
+    #     for rawline in extract_text(plan_text_path).splitlines()
+    #     for ref in pythonbible.get_references(
+    #         text=rawline.strip(), book_groups=bible.bookgroups
+    #     )
+    # ],
