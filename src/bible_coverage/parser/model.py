@@ -1,6 +1,9 @@
 from abc import abstractmethod
 from typing import Iterable, Union
 
+import bible_coverage.bibles.model
+
+
 class VerseRange:
     __start: int
     __end: int
@@ -40,28 +43,6 @@ class VerseRangeList(list):
         return (verse for verseRange in self for verse in verseRange.getAllVerses())
 
 
-class ChapterRange:
-    __start: int
-    __end: int
-
-    def __init__(self, tokens):
-        if len(tokens) == 1:
-            # single Chapter
-            self.__start = tokens[0]
-            self.__end = tokens[0]
-        else:
-            self.__start = tokens[0]
-            self.__end = tokens[2]
-
-    @property
-    def start(self) -> int:
-        return self.__start
-
-    @property
-    def end(self) -> int:
-        return self.__end
-
-
 class NormalizedReference:
     __book: str
     __chapter: int
@@ -85,6 +66,38 @@ class NormalizedReference:
         return self.__verse
 
 
+class ChapterRange:
+    __start: int
+    __end: int
+
+    def __init__(self, tokens):
+        if len(tokens) == 1:
+            # single Chapter
+            self.__start = tokens[0]
+            self.__end = tokens[0]
+        else:
+            self.__start = tokens[0]
+            self.__end = tokens[2]
+
+    @property
+    def start(self) -> int:
+        return self.__start
+
+    @property
+    def end(self) -> int:
+        return self.__end
+
+    def getNormalizedReferences(
+        self, bible: bible_coverage.bibles.model.Bible, book: str
+    ) -> Iterable[NormalizedReference]:
+        pass
+        # return (
+        #     NormalizedReference(book, self.chapter, verse)
+        #     for verse in bible.
+        #     for verse in verseRange.getAllVerses()
+        # )
+
+
 class ChapterAndVerseRanges:
     __chapter: int
     __verseRanges: VerseRangeList
@@ -102,7 +115,7 @@ class ChapterAndVerseRanges:
         return self.__verseRanges
 
     def getNormalizedReferences(
-        self, bible, book: str
+        self, bible: bible_coverage.bibles.model.Bible, book: str
     ) -> Iterable[NormalizedReference]:
         return (
             NormalizedReference(book, self.chapter, verse)
@@ -140,7 +153,7 @@ class MultiChapterRange:
         return self.__endVerse
 
     def getNormalizedReferences(
-        self, bible, book: str
+        self, bible: bible_coverage.bibles.model.Bible, book: str
     ) -> Iterable[NormalizedReference]:
         # here it gets tricky with chapter boundaries
         pass
