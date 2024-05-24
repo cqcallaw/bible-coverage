@@ -4,7 +4,6 @@ import pyparsing
 import pytest
 
 import bible_coverage.parser.parser as parser
-import pythonbible as pb
 
 # forms:
 # <book><chapter>
@@ -73,26 +72,28 @@ class TestVerseParsing(unittest.TestCase):
 
     def test_reference(self) -> None:
         result = parser.reference.parse_string("Genesis 3:1-10")
-        self.assertEqual(result.reference.book, "Genesis")
+        self.assertEqual(result.reference.book.title, "Genesis")
         self.assertIsInstance(
-            result.chapter_and_verse_ranges, parser.model.ChapterAndVerseRanges
+            result.reference.chapterRangesAndVerseRanges,
+            parser.model.ChapterAndVerseRanges,
         )
-        # self.assertEqual(result.reference.chapter.number, 3)
-        # self.assertEqual(len(result.reference.verseRanges), 1)
-        # self.assertEqual(
-        #     result.reference.verseRanges[0].start.number, 1
-        # )
-        # self.assertEqual(
-        #     result.chaptered_reference.verseRanges[0].end.number, 10
-        # )
+        self.assertEqual(result.reference.chapterRangesAndVerseRanges.chapter.number, 3)
+        self.assertEqual(
+            len(result.reference.chapterRangesAndVerseRanges.verseRanges), 1
+        )
+        self.assertEqual(
+            result.reference.chapterRangesAndVerseRanges.verseRanges[0].start.number, 1
+        )
+        self.assertEqual(
+            result.reference.chapterRangesAndVerseRanges.verseRanges[0].end.number, 10
+        )
 
     def test_genesis(self) -> None:
-        result = parser.parse("Genesis 1:1")
+        result = list(parser.parse("Genesis 1:1"))
         self.assertEqual(len(result), 1)
-        self.assertEqual(result.reference.book, "Genesis")
-        self.assertEqual(result.reference.chapter, 1)
-        self.assertEqual(result.reference.start_verse, 1)
-        self.assertEqual(result.reference.end_verse, 1)
+        self.assertEqual(result[0].book, "Genesis")
+        self.assertEqual(result[0].chapter, 1)
+        self.assertEqual(result[0].verse, 1)
 
     def test_whole_psalm(self) -> None:
         result = parser.parse("Psalm 100")

@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Iterable, List, Union
+from typing import Iterable, Union
 
 
 class Verse:
@@ -84,6 +84,7 @@ class ChapterRange:
     def end(self) -> Chapter:
         return self.__end
 
+
 class NormalizedReference:
     __book: str
     __chapter: int
@@ -127,7 +128,7 @@ class ChapterAndVerseRanges:
         self, bible, book: str
     ) -> Iterable[NormalizedReference]:
         return (
-            NormalizedReference(book, self.chapter, verse.number)
+            NormalizedReference(book, self.chapter.number, verse)
             for verseRange in self.verseRanges
             for verse in verseRange.getAllVerses()
         )
@@ -137,7 +138,7 @@ class MultiChapterRange:
     __startChapter: Chapter
     __startVerse: Verse
     __endChapter: Chapter
-    __endVerse = Verse
+    __endVerse: Verse
 
     def __init__(self, tokens):
         self.__startChapter = tokens[0]
@@ -219,9 +220,12 @@ class Book:
     def title(self) -> str:
         return self.__title
 
+
 class Reference:
     __book: Book
-    __chapterRangesAndVerseRanges: Union[ChapterRangeList, ChapterAndVerseRangeList, MultiChapterRangeList]
+    __chapterRangesAndVerseRanges: Union[
+        ChapterRangeList, ChapterAndVerseRangeList, MultiChapterRangeList
+    ]
 
     def __init__(self, tokens):
         self.__book = tokens[0]
