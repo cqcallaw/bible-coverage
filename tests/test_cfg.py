@@ -19,34 +19,34 @@ class TestVerseParsing(unittest.TestCase):
     def test_verse_parse(self) -> None:
         result = parser.startVerse.parse_string("2")
         self.assertEqual(len(result), 1)
-        self.assertEqual(result.start_verse.number, 2)
+        self.assertEqual(result.start_verse, 2)
 
     def test_verse_range_parse(self) -> None:
         result = parser.verseRange.parse_string("2-9")
         self.assertEqual(len(result), 1)
-        self.assertEqual(result.verse_range.start.number, 2)
-        self.assertEqual(result.verse_range.end.number, 9)
+        self.assertEqual(result.verse_range.start, 2)
+        self.assertEqual(result.verse_range.end, 9)
 
     def test_verse_range_parse_single(self) -> None:
         result = parser.verseRange.parse_string("3")
         self.assertEqual(len(result), 1)
-        self.assertEqual(result.verse_range.start.number, 3)
-        self.assertEqual(result.verse_range.end.number, 3)
+        self.assertEqual(result.verse_range.start, 3)
+        self.assertEqual(result.verse_range.end, 3)
 
     def test_verse_range_list(self) -> None:
         result = parser.verseRangeList.parse_string("1-3, 7, 8-10")
         self.assertEqual(len(result), 3)
-        self.assertEqual(result[0].start.number, 1)
-        self.assertEqual(result[0].end.number, 3)
-        self.assertEqual(result[1].start.number, 7)
-        self.assertEqual(result[1].end.number, 7)
-        self.assertEqual(result[2].start.number, 8)
-        self.assertEqual(result[2].end.number, 10)
+        self.assertEqual(result[0].start, 1)
+        self.assertEqual(result[0].end, 3)
+        self.assertEqual(result[1].start, 7)
+        self.assertEqual(result[1].end, 7)
+        self.assertEqual(result[2].start, 8)
+        self.assertEqual(result[2].end, 10)
 
     def test_chapter(self) -> None:
         result = parser.chapterRangeList.parse_string("3")
-        self.assertEqual(result.chapter_range_list[0].start.number, 3)
-        self.assertEqual(result.chapter_range_list[0].end.number, 3)
+        self.assertEqual(result.chapter_range_list[0].start, 3)
+        self.assertEqual(result.chapter_range_list[0].end, 3)
 
     def test_book(self) -> None:
         result = parser.book.parse_string("Genesis")
@@ -54,21 +54,21 @@ class TestVerseParsing(unittest.TestCase):
 
     def test_chapter_and_verse_range(self) -> None:
         result = parser.chapterAndVerseRanges.parse_string("3:1-10")
-        self.assertEqual(result.chapter_and_verse_ranges.chapter.number, 3)
+        self.assertEqual(result.chapter_and_verse_ranges.chapter, 3)
         self.assertEqual(len(result.chapter_and_verse_ranges.verseRanges), 1)
-        self.assertEqual(result.chapter_and_verse_ranges.verseRanges[0].start.number, 1)
-        self.assertEqual(result.chapter_and_verse_ranges.verseRanges[0].end.number, 10)
+        self.assertEqual(result.chapter_and_verse_ranges.verseRanges[0].start, 1)
+        self.assertEqual(result.chapter_and_verse_ranges.verseRanges[0].end, 10)
 
     def test_chapter_and_verse_ranges(self) -> None:
         result = parser.chapterAndVerseRanges.parse_string("3:1-10, 12-15")
-        self.assertEqual(result.chapter_and_verse_ranges.chapter.number, 3)
+        self.assertEqual(result.chapter_and_verse_ranges.chapter, 3)
         self.assertEqual(len(result.chapter_and_verse_ranges.verseRanges), 2)
-        self.assertEqual(result.chapter_and_verse_ranges.verseRanges[0].start.number, 1)
-        self.assertEqual(result.chapter_and_verse_ranges.verseRanges[0].end.number, 10)
+        self.assertEqual(result.chapter_and_verse_ranges.verseRanges[0].start, 1)
+        self.assertEqual(result.chapter_and_verse_ranges.verseRanges[0].end, 10)
         self.assertEqual(
-            result.chapter_and_verse_ranges.verseRanges[1].start.number, 12
+            result.chapter_and_verse_ranges.verseRanges[1].start, 12
         )
-        self.assertEqual(result.chapter_and_verse_ranges.verseRanges[1].end.number, 15)
+        self.assertEqual(result.chapter_and_verse_ranges.verseRanges[1].end, 15)
 
     def test_reference(self) -> None:
         result = parser.reference.parse_string("Genesis 3:1-10")
@@ -77,15 +77,15 @@ class TestVerseParsing(unittest.TestCase):
             result.reference.chapterRangesAndVerseRanges,
             parser.model.ChapterAndVerseRanges,
         )
-        self.assertEqual(result.reference.chapterRangesAndVerseRanges.chapter.number, 3)
+        self.assertEqual(result.reference.chapterRangesAndVerseRanges.chapter, 3)
         self.assertEqual(
             len(result.reference.chapterRangesAndVerseRanges.verseRanges), 1
         )
         self.assertEqual(
-            result.reference.chapterRangesAndVerseRanges.verseRanges[0].start.number, 1
+            result.reference.chapterRangesAndVerseRanges.verseRanges[0].start, 1
         )
         self.assertEqual(
-            result.reference.chapterRangesAndVerseRanges.verseRanges[0].end.number, 10
+            result.reference.chapterRangesAndVerseRanges.verseRanges[0].end, 10
         )
 
     def test_genesis(self) -> None:
@@ -96,7 +96,7 @@ class TestVerseParsing(unittest.TestCase):
         self.assertEqual(result[0].verse, 1)
 
     def test_whole_psalm(self) -> None:
-        result = parser.parse("Psalm 100")
+        result = list(parser.parse("Psalm 100"))
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].book, "Psalm")
         self.assertEqual(result[0].chapter, 100)
@@ -121,7 +121,7 @@ class TestVerseParsing(unittest.TestCase):
             _ = parser.parse("Enoch 1:1")
 
     def test_basic_range(self) -> None:
-        result = parser.parse("Genesis 15:1-6")
+        result = list(parser.parse("Genesis 15:1-6"))
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].book, "Genesis")
         self.assertEqual(result[0].chapter, 15)

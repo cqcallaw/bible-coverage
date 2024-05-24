@@ -1,32 +1,9 @@
 from abc import abstractmethod
 from typing import Iterable, Union
 
-
-class Verse:
-    __number: int
-
-    def __init__(self, tokens):
-        self.__number = int(tokens[0])
-
-    @property
-    def number(self) -> int:
-        return self.__number
-
-
-class Chapter:
-    __number: int
-
-    def __init__(self, tokens):
-        self.__number = int(tokens[0])
-
-    @property
-    def number(self) -> int:
-        return self.__number
-
-
 class VerseRange:
-    __start: Verse
-    __end: Verse
+    __start: int
+    __end: int
 
     def __init__(self, tokens):
         if len(tokens) == 1:
@@ -38,19 +15,19 @@ class VerseRange:
             self.__end = tokens[2]
 
     @property
-    def start(self) -> Verse:
+    def start(self) -> int:
         return self.__start
 
     @property
-    def end(self) -> Verse:
+    def end(self) -> int:
         return self.__end
 
-    def getAllVerses(self) -> Iterable[Verse]:
+    def getAllVerses(self) -> Iterable[int]:
         return (
             verse
             for verse in range(
-                self.start.number,
-                self.end.number + 1,  # inclusive range end
+                self.start,
+                self.end + 1,  # inclusive range end
             )
         )
 
@@ -59,13 +36,13 @@ class VerseRangeList(list):
     def __init__(self, tokens):
         super().__init__(tokens)
 
-    def getAllVerses(self) -> Iterable[Verse]:
+    def getAllVerses(self) -> Iterable[int]:
         return (verse for verseRange in self for verse in verseRange.getAllVerses())
 
 
 class ChapterRange:
-    __start: Chapter
-    __end: Chapter
+    __start: int
+    __end: int
 
     def __init__(self, tokens):
         if len(tokens) == 1:
@@ -77,11 +54,11 @@ class ChapterRange:
             self.__end = tokens[2]
 
     @property
-    def start(self) -> Chapter:
+    def start(self) -> int:
         return self.__start
 
     @property
-    def end(self) -> Chapter:
+    def end(self) -> int:
         return self.__end
 
 
@@ -109,7 +86,7 @@ class NormalizedReference:
 
 
 class ChapterAndVerseRanges:
-    __chapter: Chapter
+    __chapter: int
     __verseRanges: VerseRangeList
 
     def __init__(self, tokens):
@@ -117,7 +94,7 @@ class ChapterAndVerseRanges:
         self.__verseRanges = tokens[2]
 
     @property
-    def chapter(self) -> Chapter:
+    def chapter(self) -> int:
         return self.__chapter
 
     @property
@@ -128,17 +105,17 @@ class ChapterAndVerseRanges:
         self, bible, book: str
     ) -> Iterable[NormalizedReference]:
         return (
-            NormalizedReference(book, self.chapter.number, verse)
+            NormalizedReference(book, self.chapter, verse)
             for verseRange in self.verseRanges
             for verse in verseRange.getAllVerses()
         )
 
 
 class MultiChapterRange:
-    __startChapter: Chapter
-    __startVerse: Verse
-    __endChapter: Chapter
-    __endVerse: Verse
+    __startChapter: int
+    __startVerse: int
+    __endChapter: int
+    __endVerse: int
 
     def __init__(self, tokens):
         self.__startChapter = tokens[0]
@@ -147,19 +124,19 @@ class MultiChapterRange:
         self.__endVerse = tokens[3]
 
     @property
-    def startChapter(self) -> Chapter:
+    def startChapter(self) -> int:
         return self.__startChapter
 
     @property
-    def startVerse(self) -> Verse:
+    def startVerse(self) -> int:
         return self.__startVerse
 
     @property
-    def endChapter(self) -> Chapter:
+    def endChapter(self) -> int:
         return self.__endChapter
 
     @property
-    def endVerse(self) -> Verse:
+    def endVerse(self) -> int:
         return self.__endVerse
 
     def getNormalizedReferences(

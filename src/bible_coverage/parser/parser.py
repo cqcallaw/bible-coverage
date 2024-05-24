@@ -96,13 +96,15 @@ book = pp.Or(
 #         for book in [
 #             pb.Book.OBADIAH,
 #             pb.Book.PHILEMON,
+            # pb.Book.JOHN_2,
+            # pb.Book.JOHN_3,
 #             pb.Book.JUDE,
 #         ]
 #     ]
 # ).set_results_name("book")
 
-startVerse = integer.set_results_name("start_verse").set_parse_action(model.Verse)
-endVerse = integer.set_results_name("end_verse").set_parse_action(model.Verse)
+startVerse = integer.set_results_name("start_verse")
+endVerse = integer.set_results_name("end_verse")
 verseRange = (
     ((startVerse + "-" + endVerse) | startVerse)
     .set_results_name("verse_range")
@@ -114,8 +116,8 @@ verseRangeList = (
     .set_parse_action(model.VerseRangeList)
 )
 
-startChapter = integer.set_results_name("start_chapter").set_parse_action(model.Chapter)
-endChapter = integer.set_results_name("end_chapter").set_parse_action(model.Chapter)
+startChapter = integer.set_results_name("start_chapter")
+endChapter = integer.set_results_name("end_chapter")
 chapterRange = (
     ((startChapter + "-" + endChapter) | startChapter)
     .set_results_name("chapter_range")
