@@ -50,7 +50,7 @@ class TestVerseParsing(unittest.TestCase):
 
     def test_book(self) -> None:
         result = parser.book.parse_string("Genesis")
-        self.assertEqual(result.book.title, "Genesis")
+        self.assertEqual(result.book, "Genesis")
 
     def test_chapter_and_verse_range(self) -> None:
         result = parser.chapterAndVerseRanges.parse_string("3:1-10")
@@ -72,7 +72,7 @@ class TestVerseParsing(unittest.TestCase):
 
     def test_reference(self) -> None:
         result = parser.reference.parse_string("Genesis 3:1-10")
-        self.assertEqual(result.reference.book.title, "Genesis")
+        self.assertEqual(result.reference.book, "Genesis")
         self.assertIsInstance(
             result.reference.chapterRangesAndVerseRanges,
             parser.model.ChapterAndVerseRanges,

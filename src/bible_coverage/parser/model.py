@@ -189,17 +189,8 @@ class MultiChapterRangeList(ReferenceList):
         pass
 
 
-class Book:
-    def __init__(self, tokens):
-        self.__title = tokens[0]
-
-    @property
-    def title(self) -> str:
-        return self.__title
-
-
 class Reference:
-    __book: Book
+    __book: str
     __chapterRangesAndVerseRanges: Union[
         ChapterRangeList, ChapterAndVerseRangeList, MultiChapterRangeList
     ]
@@ -209,7 +200,7 @@ class Reference:
         self.__chapterRangesAndVerseRanges = tokens[1]
 
     @property
-    def book(self) -> Book:
+    def book(self) -> str:
         return self.__book
 
     @property

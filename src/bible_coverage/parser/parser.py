@@ -10,7 +10,7 @@ integer = pp.Word(pp.nums).set_parse_action(lambda toks: int(toks[0]))
 
 book = pp.Or(
     [
-        pp.Regex(book.regular_expression).set_parse_action(model.Book)
+        pp.Regex(book.regular_expression).set_parse_action(lambda toks: str(toks[0]))
         for book in [
             pb.Book.GENESIS,
             pb.Book.EXODUS,
@@ -166,6 +166,6 @@ reference = (
 def parse(input: str, bible=None) -> Iterable[model.NormalizedReference]:
     parseResult = reference.parseString(input, parse_all=False)
     refs = parseResult.reference.chapterRangesAndVerseRanges.getNormalizedReferences(
-        bible, parseResult.reference.book.title
+        bible, parseResult.reference.book
     )
     return refs
