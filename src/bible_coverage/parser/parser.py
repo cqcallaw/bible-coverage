@@ -152,7 +152,6 @@ multiChapterRangeList = (
 chapterRangesAndVerseRanges = (
     (multiChapterRangeList | chapterAndVerseRangesList | chapterRangeList)
     .set_results_name("chapter_and_verse")
-    .set_parse_action(model.ChapterAndVerseRanges)
 )
 
 reference = (
