@@ -96,8 +96,8 @@ book = pp.Or(
 #         for book in [
 #             pb.Book.OBADIAH,
 #             pb.Book.PHILEMON,
-            # pb.Book.JOHN_2,
-            # pb.Book.JOHN_3,
+# pb.Book.JOHN_2,
+# pb.Book.JOHN_3,
 #             pb.Book.JUDE,
 #         ]
 #     ]
@@ -152,9 +152,8 @@ multiChapterRangeList = (
 )
 
 chapterRangesAndVerseRanges = (
-    (multiChapterRangeList | chapterAndVerseRangesList | chapterRangeList)
-    .set_results_name("chapter_and_verse")
-)
+    multiChapterRangeList | chapterAndVerseRangesList | chapterRangeList
+).set_results_name("chapter_and_verse")
 
 reference = (
     (book + pp.Opt(chapterRangesAndVerseRanges))
