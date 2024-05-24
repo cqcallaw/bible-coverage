@@ -1,6 +1,6 @@
 from . import model
 import logging
-from typing import Iterable
+from typing import List
 import pyparsing as pp
 import pythonbible as pb
 
@@ -162,9 +162,9 @@ reference = (
 )
 
 
-def parse(input: str, bible=None) -> Iterable[model.NormalizedReference]:
+def parse(input: str, bible=None) -> List[model.NormalizedReference]:
     parseResult = reference.parseString(input, parse_all=False)
     refs = parseResult.reference.chapterRangesAndVerseRanges.getNormalizedReferences(
         bible, parseResult.reference.book
     )
-    return refs
+    return list(refs)
