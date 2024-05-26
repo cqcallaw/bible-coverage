@@ -92,7 +92,7 @@ def test_reference() -> None:
 
 
 def test_genesis() -> None:
-    result = parser.getNormalizedReferences("Genesis 1:1")
+    result = parser.getNormalizedReferences("Genesis 1:1", nasb_bible)
     assert len(result) == 1
     assert result[0].book == "Genesis"
     assert result[0].chapter == 1
