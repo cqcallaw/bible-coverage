@@ -16,7 +16,9 @@ def parse(
         while line := file.readline():
             line = line.strip()
 
-            chapter_header_match = re.match(r"((\d\s*)?[a-zA-Z]+)\s*(\d+) New American Standard Bible", line)
+            chapter_header_match = re.match(
+                r"((\d\s*)?[a-zA-Z]+)\s*(\d+) New American Standard Bible", line
+            )
             if chapter_header_match:
                 matched_book_name = chapter_header_match.group(1)
                 matched_chapter_number = int(chapter_header_match.group(3))
@@ -47,8 +49,6 @@ def parse(
                     verse_number = int(verse_match.group(1))
                     verse_text = verse_match.group(2)
                     current_chapter[verse_number] = verse_text
-
-
 
     # handle final chapter
     current_book[current_chapter_number] = current_chapter

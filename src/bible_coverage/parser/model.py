@@ -170,6 +170,7 @@ class WholeBookChapterRange:
             for verse in bible.books[book][chapter]
         )
 
+
 class ReferenceList(list):
     def __init__(self, tokens):
         super().__init__(token for token in tokens)
