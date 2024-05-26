@@ -173,7 +173,7 @@ class ReferenceList(list):
 class ChapterRangeList(ReferenceList):
     @abstractmethod
     def getNormalizedReferenceList(
-        self, bible, book: str
+        self, bible: bible_coverage.bibles.model.Bible, book: str
     ) -> Iterable[NormalizedReference]:
         # here it gets tricky with chapter boundaries
         pass
@@ -181,7 +181,7 @@ class ChapterRangeList(ReferenceList):
 
 class ChapterAndVerseRangeList(ReferenceList):
     def getNormalizedReferenceList(
-        self, bible, book: str
+        self, bible: bible_coverage.bibles.model.Bible, book: str
     ) -> Iterable[NormalizedReference]:
         result = [
             reference
@@ -196,7 +196,7 @@ class ChapterAndVerseRangeList(ReferenceList):
 class MultiChapterRangeList(ReferenceList):
     @abstractmethod
     def getNormalizedReferenceList(
-        self, bible, book: str
+        self, bible: bible_coverage.bibles.model.Bible, book: str
     ) -> Iterable[NormalizedReference]:
         # here it gets tricky with chapter boundaries
         pass
