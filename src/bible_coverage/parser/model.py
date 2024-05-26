@@ -66,6 +66,17 @@ class NormalizedReference:
         return self.__verse
 
 
+class NormalizedReferenceList(list):
+    def __init__(self, tokens):
+        super().__init__(token for token in tokens)
+
+    @abstractmethod
+    def getNormalizedReferenceList(
+        self, bible, book: str
+    ) -> Iterable[NormalizedReference]:
+        pass
+
+
 class ChapterRange:
     __start: int
     __end: int
@@ -171,18 +182,7 @@ class WholeBookChapterRange:
         )
 
 
-class ReferenceList(list):
-    def __init__(self, tokens):
-        super().__init__(token for token in tokens)
-
-    @abstractmethod
-    def getNormalizedReferenceList(
-        self, bible, book: str
-    ) -> Iterable[NormalizedReference]:
-        pass
-
-
-class ChapterRangeList(ReferenceList):
+class ChapterRangeList(NormalizedReferenceList):
     @abstractmethod
     def getNormalizedReferenceList(
         self, bible: bible_coverage.bibles.model.Bible, book: str
@@ -191,7 +191,7 @@ class ChapterRangeList(ReferenceList):
         pass
 
 
-class ChapterAndVerseRangeList(ReferenceList):
+class ChapterAndVerseRangeList(NormalizedReferenceList):
     def getNormalizedReferenceList(
         self, bible: bible_coverage.bibles.model.Bible, book: str
     ) -> Iterable[NormalizedReference]:
@@ -205,7 +205,7 @@ class ChapterAndVerseRangeList(ReferenceList):
         return result
 
 
-class MultiChapterRangeList(ReferenceList):
+class MultiChapterRangeList(NormalizedReferenceList):
     @abstractmethod
     def getNormalizedReferenceList(
         self, bible: bible_coverage.bibles.model.Bible, book: str
