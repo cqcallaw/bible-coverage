@@ -140,7 +140,7 @@ chapterRange = (
 chapterRangeList = (
     pp.DelimitedList(chapterRange, delim=",")
     .set_results_name("chapter_range_list")
-    .set_parse_action(model.ChapterRangeList)
+    .set_parse_action(model.ReferenceRangeSpecifier)
 )
 
 chapterAndVerseRanges = (
@@ -151,7 +151,7 @@ chapterAndVerseRanges = (
 chapterAndVerseRangesList = (
     pp.DelimitedList(expr=chapterAndVerseRanges, delim=";")
     .set_results_name("chapter_and_verse_range_list")
-    .set_parse_action(model.ChapterAndVerseRangeList)
+    .set_parse_action(model.ReferenceRangeSpecifier)
 )
 
 multiChapterRange = (
@@ -162,15 +162,15 @@ multiChapterRange = (
 multiChapterRangeList = (
     pp.DelimitedList(multiChapterRange)
     .set_results_name("multi_chapter_range_list")
-    .set_parse_action(model.MultiChapterRangeList)
+    .set_parse_action(model.ReferenceRangeSpecifier)
 )
 
-chapterRangesAndVerseRanges = (
+verseRangeSpecifiers = (
     multiChapterRangeList | chapterAndVerseRangesList | chapterRangeList
-).set_results_name("chapter_and_verse")
+).set_results_name("range_specifiers")
 
 reference = (
-    (book + pp.Opt(chapterRangesAndVerseRanges))
+    (book + pp.Opt(verseRangeSpecifiers))
     .set_results_name("reference")
     .set_parse_action(model.Reference)
 )

@@ -1,5 +1,4 @@
-from abc import abstractmethod
-from typing import Iterable, Union
+from typing import Iterable
 
 import bible_coverage.bibles.model
 
@@ -66,15 +65,19 @@ class NormalizedReference:
         return self.__verse
 
 
-class NormalizedReferenceList(list):
+class ReferenceRangeSpecifier(list):
     def __init__(self, tokens):
         super().__init__(token for token in tokens)
 
-    @abstractmethod
     def getNormalizedReferenceList(
         self, bible, book: str
     ) -> Iterable[NormalizedReference]:
-        pass
+        result = [
+            reference
+            for chapterRangeList in self
+            for reference in chapterRangeList.getNormalizedReferences(bible, book)
+        ]
+        return result
 
 
 class ChapterRange:
@@ -167,8 +170,19 @@ class MultiChapterRange:
     def getNormalizedReferences(
         self, bible: bible_coverage.bibles.model.Bible, book: str
     ) -> Iterable[NormalizedReference]:
-        # here it gets tricky with chapter boundaries
-        pass
+        raise Exception("unimplemented")
+        return (
+            NormalizedReference(book, chapter, verse)
+            for chapter in range(
+                self.startChapter, self.endChapter + 1
+            )  # inclusive range
+            for verse in range(
+                self.startVerse if chapter == self.startChapter else 1,
+                self.endVerse
+                if chapter == self.endChapter
+                else bible.books[book][chapter].keys()[-1:],
+            )
+        )
 
 
 class WholeBookChapterRange:
@@ -182,43 +196,9 @@ class WholeBookChapterRange:
         )
 
 
-class ChapterRangeList(NormalizedReferenceList):
-    @abstractmethod
-    def getNormalizedReferenceList(
-        self, bible: bible_coverage.bibles.model.Bible, book: str
-    ) -> Iterable[NormalizedReference]:
-        # here it gets tricky with chapter boundaries
-        pass
-
-
-class ChapterAndVerseRangeList(NormalizedReferenceList):
-    def getNormalizedReferenceList(
-        self, bible: bible_coverage.bibles.model.Bible, book: str
-    ) -> Iterable[NormalizedReference]:
-        result = [
-            reference
-            for chapterAndVerseRangeList in self
-            for reference in chapterAndVerseRangeList.getNormalizedReferences(
-                bible, book
-            )
-        ]
-        return result
-
-
-class MultiChapterRangeList(NormalizedReferenceList):
-    @abstractmethod
-    def getNormalizedReferenceList(
-        self, bible: bible_coverage.bibles.model.Bible, book: str
-    ) -> Iterable[NormalizedReference]:
-        # here it gets tricky with chapter boundaries
-        pass
-
-
 class Reference:
     __book: str
-    __chapterRangesAndVerseRanges: Union[
-        ChapterRangeList, ChapterAndVerseRangeList, MultiChapterRangeList
-    ]
+    __chapterRangesAndVerseRanges: ReferenceRangeSpecifier
 
     def __init__(self, tokens):
         if len(tokens) == 1:
