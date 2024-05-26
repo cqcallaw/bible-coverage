@@ -35,5 +35,20 @@ def test_genesis_and_exodus_parse() -> None:
     assert result.books["Exodus"][40][38]
 
 
+def test_short_book_parse() -> None:
+    result = bible.parse(
+        os.path.join(os.path.dirname(__file__), "short_books_nasb.txt")
+    )
+    assert "3 John" in result.books.keys()
+    assert "Jude" in result.books.keys()
+    assert "Revelation" in result.books.keys()
+    assert result.books["Jude"][1][1]
+    assert result.books["Jude"][1][25]
+    assert result.books["3 John"][1][1]
+    assert result.books["3 John"][1][15]
+    assert result.books["Revelation"][1][1]
+    assert result.books["Revelation"][22][21]
+
+
 if __name__ == "__main__":
     pytest.main()
