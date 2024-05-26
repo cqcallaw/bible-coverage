@@ -90,12 +90,11 @@ class ChapterRange:
     def getNormalizedReferences(
         self, bible: bible_coverage.bibles.model.Bible, book: str
     ) -> Iterable[NormalizedReference]:
-        pass
-        # return (
-        #     NormalizedReference(book, self.chapter, verse)
-        #     for verse in bible.
-        #     for verse in verseRange.getAllVerses()
-        # )
+        return (
+            NormalizedReference(book, chapter, verse)
+            for chapter in range(self.start, self.end + 1)  # inclusive range
+            for verse in bible.books[book][chapter].keys()
+        )
 
 
 class ChapterAndVerseRanges:
@@ -103,6 +102,7 @@ class ChapterAndVerseRanges:
     __verseRanges: VerseRangeList
 
     def __init__(self, tokens):
+        assert len(tokens) == 3
         self.__chapter = tokens[0]
         self.__verseRanges = tokens[2]
 
@@ -131,6 +131,7 @@ class MultiChapterRange:
     __endVerse: int
 
     def __init__(self, tokens):
+        assert len(tokens) == 4
         self.__startChapter = tokens[0]
         self.__startVerse = tokens[1]
         self.__endChapter = tokens[2]
@@ -158,6 +159,16 @@ class MultiChapterRange:
         # here it gets tricky with chapter boundaries
         pass
 
+
+class WholeBookChapterRange:
+    def getNormalizedReferences(
+        self, bible: bible_coverage.bibles.model.Bible, book: str
+    ) -> Iterable[NormalizedReference]:
+        return (
+            NormalizedReference(book, chapter, verse)
+            for chapter in bible.books[book].keys()
+            for verse in bible.books[book][chapter]
+        )
 
 class ReferenceList(list):
     def __init__(self, tokens):
@@ -209,8 +220,14 @@ class Reference:
     ]
 
     def __init__(self, tokens):
-        self.__book = tokens[0]
-        self.__chapterRangesAndVerseRanges = tokens[1]
+        if len(tokens) == 1:
+            # book reference
+            self.__book = tokens[0]
+            self.__chapterRangesAndVerseRanges = WholeBookChapterRange()
+        else:
+            assert len(tokens) == 2
+            self.__book = tokens[0]
+            self.__chapterRangesAndVerseRanges = tokens[1]
 
     @property
     def book(self) -> str:
