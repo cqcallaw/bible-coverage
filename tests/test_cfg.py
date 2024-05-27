@@ -128,29 +128,29 @@ def test_short_book_verse() -> None:
 
 def test_invalid() -> None:
     with pytest.raises(pyparsing.exceptions.ParseException):
-        _ = parser.getNormalizedReferences("Enoch 1:1")
+        _ = parser.getNormalizedReferences("Enoch 1:1", nasb_bible)
 
 
 def test_basic_range() -> None:
-    result = parser.getNormalizedReferences("Genesis 15:1-6")
-    assert len(result) == 1
+    result = parser.getNormalizedReferences("Genesis 15:1-6", nasb_bible)
+    assert len(result) == 6
     assert result[0].book == "Genesis"
     assert result[0].chapter == 15
-    assert result[0].start_verse == 1
-    assert result[0].end_verse == 6
+    assert result[0].verse == 1
 
 
 def test_optional_range() -> None:
-    result = parser.getNormalizedReferences("Luke 2:1-14 [15-20]")
-    assert len(result) == 1
+    result = parser.getNormalizedReferences("Luke 2:1-14 [15-20]", nasb_bible)
+    assert len(result) == 20
     assert result[0].book == "Luke"
     assert result[0].chapter == 2
-    assert result[0].start_verse == 1
-    assert result[0].end_verse == 20
+    assert result[0].verse == 1
+    assert result[19].chapter == 2
+    assert result[19].verse == 20
 
 
 def test_second_disjunct_ranges() -> None:
-    result = parser.getNormalizedReferences("Isaiah 1:1, 10-20")
+    result = parser.getNormalizedReferences("Isaiah 1:1, 10-20", nasb_bible)
     assert len(result) == 2
     assert result[0].book == "Isaiah"
     assert result[0].chapter == 2
@@ -163,17 +163,19 @@ def test_second_disjunct_ranges() -> None:
 
 
 def test_disjunct_books() -> None:
-    result = parser.getNormalizedReferences("Galatians 4:4-7 or Philippians 2:5-11")
+    result = parser.getNormalizedReferences(
+        "Galatians 4:4-7 or Philippians 2:5-11", nasb_bible
+    )
     assert len(result) == 2
 
 
 def test_verse_a_start() -> None:
-    result = parser.getNormalizedReferences("Amos 6:1a, 4-7")
+    result = parser.getNormalizedReferences("Amos 6:1a, 4-7", nasb_bible)
     assert len(result) == 2
 
 
 def test_verse_a_end() -> None:
-    result = parser.getNormalizedReferences("Revelation 21:1-6a")
+    result = parser.getNormalizedReferences("Revelation 21:1-6a", nasb_bible)
     assert len(result) == 1
     assert result[0].book == "Revelation"
     assert result[0].chapter == 21
@@ -182,7 +184,7 @@ def test_verse_a_end() -> None:
 
 
 def test_verse_b_start() -> None:
-    result = parser.getNormalizedReferences("Romans 10:8b-13")
+    result = parser.getNormalizedReferences("Romans 10:8b-13", nasb_bible)
     assert len(result) == 1
     assert result[0].book == "Romans"
     assert result[0].chapter == 10
@@ -191,7 +193,7 @@ def test_verse_b_start() -> None:
 
 
 def test_verse_b_end() -> None:
-    result = parser.getNormalizedReferences("Romans 12:9-16b")
+    result = parser.getNormalizedReferences("Romans 12:9-16b", nasb_bible)
     assert len(result) == 1
     assert result[0].book == "Romans"
     assert result[0].chapter == 12
@@ -200,18 +202,25 @@ def test_verse_b_end() -> None:
 
 
 def test_multiple_ranges() -> None:
-    result = parser.getNormalizedReferences("Nehemiah 8:1-3, 5-6, 8-10")
+    result = parser.getNormalizedReferences("Nehemiah 8:1-3, 5-6, 8-10", nasb_bible)
     assert len(result) == 3
 
 
 def test_multiple_ranges_multiple_styles() -> None:
-    result = parser.getNormalizedReferences("Nehemiah 8:1-3, 7, 8-10")
+    result = parser.getNormalizedReferences("Nehemiah 8:1-3, 7, 8-10", nasb_bible)
     assert len(result) == 3
 
 
 def test_multiple_chapter_ranges() -> None:
-    result = parser.getNormalizedReferences("Ecclesiastes 1:2, 12-14; 2:18-23")
+    result = parser.getNormalizedReferences(
+        "Ecclesiastes 1:2, 12-14; 2:18-23", nasb_bible
+    )
     assert len(result) == 3
+
+
+def test_extra_verse_ranges() -> None:
+    result = parser.getNormalizedReferences("Ecclesiastes 1:100", nasb_bible)
+    assert len(result) == 0
 
 
 if __name__ == "__main__":
