@@ -104,11 +104,19 @@ class ChapterRange:
     def getNormalizedReferences(
         self, bible: bible_coverage.bibles.model.Bible, book: str
     ) -> Iterable[NormalizedReference]:
-        return (
-            NormalizedReference(book, chapter, verse)
-            for chapter in range(self.start, self.end + 1)  # inclusive range
-            for verse in bible.books[book][chapter].keys()
-        )
+        # range ends are incremented to make the range inclusive of the end
+        if book in ["Obadiah", "2 John", "3 John", "Jude"]:
+            # handle single-chapter books, where the "chapter" range is actually a verse range
+            return (
+                NormalizedReference(book, 1, verse)
+                for verse in range(self.start, self.end + 1)  # inclusive range
+            )
+        else:
+            return (
+                NormalizedReference(book, chapter, verse)
+                for chapter in range(self.start, self.end + 1)  # inclusive range
+                for verse in bible.books[book][chapter].keys()
+            )
 
 
 class ChapterAndVerseRanges:
