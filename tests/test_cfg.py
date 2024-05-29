@@ -203,12 +203,12 @@ def test_verse_b_end() -> None:
 
 def test_multiple_ranges() -> None:
     result = parser.getNormalizedReferences("Nehemiah 8:1-3, 5-6, 8-10", nasb_bible)
-    assert len(result) == 3
+    assert len(result) == 8
 
 
 def test_multiple_ranges_multiple_styles() -> None:
     result = parser.getNormalizedReferences("Nehemiah 8:1-3, 7, 8-10", nasb_bible)
-    assert len(result) == 3
+    assert len(result) == 7
 
 
 def test_multiple_chapter_ranges() -> None:
