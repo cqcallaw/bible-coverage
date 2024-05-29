@@ -102,21 +102,6 @@ book = pp.Or(
     ]
 ).set_results_name("book")
 
-
-# singleChapterBook = pp.Or(
-#     [
-#         pp.Regex(book.regular_expression)
-#         .set_parse_action(lambda: model.Book(book.title, book))
-#         for book in [
-#             pb.Book.OBADIAH,
-#             pb.Book.PHILEMON,
-# pb.Book.JOHN_2,
-# pb.Book.JOHN_3,
-#             pb.Book.JUDE,
-#         ]
-#     ]
-# ).set_results_name("book")
-
 startVerse = integer.set_results_name("start_verse")
 endVerse = integer.set_results_name("end_verse")
 verseRange = (
