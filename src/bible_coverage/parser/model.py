@@ -10,11 +10,11 @@ class VerseRange:
     def __init__(self, tokens):
         if len(tokens) == 1:
             # single verse
-            self.__start = tokens[0]
-            self.__end = tokens[0]
+            self.__start = int(tokens[0])
+            self.__end = int(tokens[0])
         else:
-            self.__start = tokens[0]
-            self.__end = tokens[2]
+            self.__start = int(tokens[0])
+            self.__end = int(tokens[2])
 
     @property
     def start(self) -> int:
