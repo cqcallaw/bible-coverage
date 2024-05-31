@@ -171,34 +171,49 @@ def test_disjunct_books() -> None:
 
 def test_verse_a_start() -> None:
     result = parser.getNormalizedReferences("Amos 6:1a, 4-7", nasb_bible)
-    assert len(result) == 2
+    assert len(result) == 5
+    assert result[0].book == "Amos"
+    assert result[0].chapter == 6
+    assert result[0].verse == 1
+    assert result[1].book == "Amos"
+    assert result[1].chapter == 6
+    assert result[1].verse == 4
+    assert result[4].book == "Amos"
+    assert result[4].chapter == 6
+    assert result[4].verse == 7
 
 
 def test_verse_a_end() -> None:
     result = parser.getNormalizedReferences("Revelation 21:1-6a", nasb_bible)
-    assert len(result) == 1
+    assert len(result) == 6
     assert result[0].book == "Revelation"
     assert result[0].chapter == 21
-    assert result[0].start_verse == 1
-    assert result[0].end_verse == 6
+    assert result[0].verse == 1
+    assert result[5].book == "Revelation"
+    assert result[5].chapter == 21
+    assert result[5].verse == 6
 
 
 def test_verse_b_start() -> None:
     result = parser.getNormalizedReferences("Romans 10:8b-13", nasb_bible)
-    assert len(result) == 1
+    assert len(result) == 6
     assert result[0].book == "Romans"
     assert result[0].chapter == 10
-    assert result[0].start_verse == 8
-    assert result[0].end_verse == 13
+    assert result[0].verse == 8
+    assert result[5].book == "Romans"
+    assert result[5].chapter == 10
+    assert result[5].verse == 13
 
 
 def test_verse_b_end() -> None:
     result = parser.getNormalizedReferences("Romans 12:9-16b", nasb_bible)
-    assert len(result) == 1
+    assert len(result) == 8
     assert result[0].book == "Romans"
     assert result[0].chapter == 12
-    assert result[0].start_verse == 9
-    assert result[0].end_verse == 16
+    assert result[0].verse == 9
+    assert result[7].book == "Romans"
+    assert result[7].chapter == 12
+    assert result[7].verse == 16
 
 
 def test_multiple_ranges() -> None:

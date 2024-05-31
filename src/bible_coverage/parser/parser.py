@@ -102,8 +102,14 @@ book = pp.Or(
     ]
 ).set_results_name("book")
 
-startVerse = integer.set_results_name("start_verse")
-endVerse = integer.set_results_name("end_verse")
+startVerse = (
+    (integer + "a" | integer + "b" | integer)
+    # integer
+    .set_results_name("start_verse")
+    .set_parse_action(lambda toks: toks[0])
+)
+endVerse = startVerse.set_results_name("end_verse")
+
 verseRange = (
     ((startVerse + "-" + endVerse) | startVerse)
     .set_results_name("verse_range")
